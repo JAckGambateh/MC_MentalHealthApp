@@ -1,5 +1,6 @@
 {
   "expo": {
+    "scheme": "Mental_App", 
     "name": "MentalApp",
     "slug": "MentalApp",
     "version": "1.0.0",

@@ -22,8 +22,9 @@ const RootLayout = () => {
         <Stack.Screen name="(dashboard)" options={{headerShown: false}}/>
 
         <Stack.Screen name="index" options={{ title: 'Home', headerShown: false}} />
-        <Stack.Screen name="page1" options={{ title: 'to be updated'}} />
-        <Stack.Screen name="page2" options={{ title: 'same', headerShown: false}} />
+        <Stack.Screen name="inbox" options={{ title: 'Inbox', headerShown: false}} />
+        <Stack.Screen name="strangers" options={{ title: 'Stranger', headerShown: false}} />
+
       </Stack>
     </>
   )

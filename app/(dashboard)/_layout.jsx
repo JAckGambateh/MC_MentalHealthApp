@@ -22,36 +22,7 @@ const DashboardLayout = () => {
                 tabBarInactiveTintColor: theme.iconColor,
             }}
         >
-            <Tabs.Screen
-                name="profile"
-                options={{
-                    title: 'Profile',
-                    tabBarIcon: ({ focused, color }) => (
-                        <Ionicons size={24} name={focused ? 'person' : 'person-outline'} color={color} />
-                    )
-                }}
-            />
-
-            <Tabs.Screen
-                name="create"
-                options={{
-                    title: 'Add',
-                    tabBarIcon: ({ focused, color }) => (
-                        <Ionicons size={24} name={focused ? 'add-circle' : 'add-circle-outline'} color={color} />
-                    )
-                }}
-            />
-
-            <Tabs.Screen
-                name="message"
-                options={{
-                    title: 'Message',
-                    tabBarIcon: ({ focused, color }) => (
-                        <Ionicons size={24} name={focused ? 'chatbubbles' : 'chatbubbles-outline'} color={color} />
-                    )
-                }}
-            />
-
+            
             <Tabs.Screen
                 name="mood"
                 options={{
@@ -66,6 +37,28 @@ const DashboardLayout = () => {
                 }}
             />
 
+
+            <Tabs.Screen
+                name="message"
+                options={{
+                    title: 'Message',
+                    tabBarIcon: ({ focused, color }) => (
+                        <Ionicons size={24} name={focused ? 'chatbubbles' : 'chatbubbles-outline'} color={color} />
+                    )
+                }}
+            />
+
+            <Tabs.Screen
+                name="home"
+                options={{
+                    title: 'Home',
+                    tabBarIcon: ({ focused, color }) => (
+                        <Ionicons size={24} name={focused ? 'home' : 'home-outline'} color={color} />
+                    )
+                }}
+            />
+
+
             <Tabs.Screen
                 name="activity"
                 options={{
@@ -75,6 +68,16 @@ const DashboardLayout = () => {
                     )
                 }}
             />
+            <Tabs.Screen
+                name="profile"
+                options={{
+                    title: 'Profile',
+                    tabBarIcon: ({ focused, color }) => (
+                        <Ionicons size={24} name={focused ? 'person' : 'person-outline'} color={color} />
+                    )
+                }}
+            />
+
         </Tabs>
     )
 }

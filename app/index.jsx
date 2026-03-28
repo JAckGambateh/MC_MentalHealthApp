@@ -1,23 +1,40 @@
-import { StyleSheet, Text, View, Image } from 'react-native'
+import { StyleSheet, Text, View, Image, useColorScheme, Pressable, ImageBackground } from 'react-native' // 1. Added ImageBackground here
 import Logo from '../assets/img/mentalHealthLogo.png'
-import{Link} from 'expo-router'
-
+import { Link } from 'expo-router'
+import { Colors } from "../constants/Colors"
+import ThemedView from '../components/ThemedView'
+import Spacer from '../components/Spacer'
+import ThemedText from '../components/ThemedText'
+import { SafeAreaView } from 'react-native-safe-area-context'
 
 const Home = () => {
+    const colorScheme = useColorScheme()
+    const theme = Colors[colorScheme] ?? Colors.light
+    
     return (
-        <View style={styles.container}>
+        
+        <ImageBackground 
+            source={require('../assets/img/Home.jpeg')} 
+            style={styles.container}
+            resizeMode="cover"
+        >
+          <Spacer height={300}/>
 
-            <Image source={Logo} style={styles.img} />
+            <ThemedText style={styles.title} title={true}>How your days ??? </ThemedText>
 
-            <Text style={[styles.title, { color:'purple'}]}>The Numer 1</Text>
-            <Text style={{marginTop: 10, marinBottom: 30}}>aaaaaa</Text>
+            <Spacer height={10}/>
 
-            <View style={styles.card}>
-                <Text>Hello,mamamia</Text>
-            </View>
-            <Link href="/page1" style={styles.link}>Page1</Link>
-            <Link href="/page2" style={styles.link}>Page2</Link>
-        </View>
+            <Link href="/login" style={styles.link}>
+            <ThemedText>Login here</ThemedText>
+            </Link>
+
+            <Link href="/register" style={styles.link}>
+              <ThemedText>Register here</ThemedText>
+            </Link>
+
+            
+
+        </ImageBackground> 
     )
 }
 export default Home
@@ -26,14 +43,12 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         alignItems: 'center',
-        justifyContent: 'center',
+        
     },
     title: {
         fontWeight: 'bold',
-        fontSize: 24,
-    },
-    img:{
-        marginVertical: 20,
+        fontSize: 30,
+        marginTop: -15,
     },
     card: {
         backgroundColor: '#dbd5d5',

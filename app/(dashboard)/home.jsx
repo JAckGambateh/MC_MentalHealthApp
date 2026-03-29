@@ -31,7 +31,7 @@ const Main = () => {
         <ThemedView style={styles.container} safe={true}>
             
             <View style={styles.header}>
-                <ThemedText title={true} style={styles.heading}>Campus Vibe</ThemedText>
+                <ThemedText title={true} style={styles.heading}>"Someone" mood</ThemedText>
                 <ThemedText style={styles.subheading}>Sunday, March 29</ThemedText>
             </View>
 

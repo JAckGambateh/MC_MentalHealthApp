@@ -1,124 +1,147 @@
 import { useState } from 'react'
-import { StyleSheet, View, TextInput, ScrollView, Pressable, useColorScheme } from 'react-native'
-import { Ionicons } from '@expo/vector-icons'
+import { StyleSheet, View, TextInput, ScrollView, Pressable, useColorScheme, Image } from 'react-native'
 import { Colors } from "../../constants/Colors"
+import { Ionicons } from '@expo/vector-icons'
+import Spacer from '../../components/Spacer'
 import ThemedView from '../../components/ThemedView'
 import ThemedText from '../../components/ThemedText'
 import ThemedCard from '../../components/ThemedCard'
-import Spacer from '../../components/Spacer'
 
-// List of available moods to map through
+// Your updated MOODS array!
 const MOODS = [
-    { id: 1, icon: 'thunderstorm-outline', label: 'Heavy', color: '#ff7675' },
-    { id: 2, icon: 'rainy-outline', label: 'Down', color: '#74b9ff' },
-    { id: 3, icon: 'cloud-outline', label: 'Okay', color: '#b2bec3' },
-    { id: 4, icon: 'partly-sunny-outline', label: 'Good', color: '#55efc4' },
-    { id: 5, icon: 'sunny-outline', label: 'Great', color: '#fdcb6e' },
+    { id: 0, image: require('../../assets/img/happy.png'), label: 'Happy', color: '#ecb1b1' },
+    { id: 1, image: require('../../assets/img/energetic.png'), label: 'Energy', color: '#b076c2' },
+    { id: 2, image: require('../../assets/img/sad.png'), label: 'Sad', color: '#c2dde9' },
+    { id: 3, image: require('../../assets/img/cry.png'), label: 'Cry', color: '#708fac' },
+    { id: 4, image: require('../../assets/img/angry.png'), label: 'Angry', color: '#fdcb6e' },
+    { id: 5, image: require('../../assets/img/sleepy.png'), label: 'Sleepy', color: '#a6a4c2' },
+    { id: 6, image: require('../../assets/img/unknown.png'), label: 'Others', color: '#cecece' }, 
 ]
-
-// Mock data for the weekly calendar strip
-const WEEK_DAYS = ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun']
 
 const Mood = () => {
     const colorScheme = useColorScheme()
     const theme = Colors[colorScheme] ?? Colors.light
     
-    // React State to remember user inputs
-    const [selectedMood, setSelectedMood] = useState(null)
+    const [moodIndex, setMoodIndex] = useState(2) 
+    const [customMood, setCustomMood] = useState('')
     const [diaryEntry, setDiaryEntry] = useState('')
+
+    const currentMood = MOODS[moodIndex] 
 
     return (
         <ThemedView style={styles.container} safe={true}>
             <ScrollView showsVerticalScrollIndicator={false}>
                 
-                {/* 1. Header & Weekly Calendar Strip */}
+                {/* 1. Header */}
                 <View style={styles.header}>
-                    <ThemedText title={true} style={styles.heading}>How's your vibe today?</ThemedText>
-                    <ThemedText style={styles.subheading}>March 29, 2026</ThemedText>
+                    <ThemedText title={true} style={styles.heading}>Today's Vibe</ThemedText>
+                    <ThemedText style={styles.subheading}>Sunday, March 29</ThemedText>
+                </View>
+
+                <Spacer height={40} />
+
+                {/* 2. Big Emotion Image Area */}
+                <View style={styles.imageContainer}>
+                    <View style={[styles.bigCircle, { backgroundColor: currentMood.color + '20' }]}>
+                        <Image 
+                            source={currentMood.image} 
+                            style={styles.bigEmotionImage} 
+                            resizeMode="contain" 
+                        />
+                    </View>
+                    
+                    <Spacer height={20} />
+                    
+                    <ThemedText style={styles.questionText}>How do you feel today?</ThemedText>
+                    <ThemedText style={[styles.moodHighlightText, { color: currentMood.color }]}>
+                        {moodIndex === 5 && customMood.length > 0 ? customMood : currentMood.label}
+                    </ThemedText>
+                </View>
+
+                <Spacer height={30} />
+
+                {/* 3. The Scrollable Colored Buttons */}
+                <View>
+                    <ScrollView 
+                        horizontal={true} 
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={styles.moodScrollContent}
+                    >
+                        {MOODS.map((mood, idx) => {
+                            const isSelected = moodIndex === idx;
+                            return (
+                                <Pressable 
+                                    key={mood.id} 
+                                    style={[
+                                        styles.moodBox, 
+                                        { backgroundColor: mood.color },
+                                        isSelected && { borderWidth: 4, borderColor: theme.uiBackground, transform: [{ scale: 1.05 }] }
+                                    ]}
+                                    onPress={() => setMoodIndex(idx)}
+                                >
+                                    {/* SMALL IMAGE - Now much bigger! */}
+                                    <Image 
+                                        source={mood.image} 
+                                        style={styles.smallEmotionImage} 
+                                        resizeMode="contain" 
+                                    />
+                                    <Spacer height={8} />
+                                    {/* Removed the weather text to make room for the bigger image */}
+                                    <ThemedText style={styles.boxLabelText}>{mood.label}</ThemedText>
+                                </Pressable>
+                            )
+                        })}
+                    </ScrollView>
                 </View>
 
                 <Spacer height={20} />
 
-                {/* Horizontal Weekly Strip */}
-                <View style={styles.calendarStrip}>
-                    {WEEK_DAYS.map((day, index) => (
-                        <View key={index} style={[
-                            styles.dayCircle, 
-                            // Highlight "Today" (Sunday) as an example
-                            index === 6 && { backgroundColor: Colors.primary }
-                        ]}>
-                            <ThemedText style={[
-                                styles.dayText,
-                                index === 6 && { color: '#FFF', fontWeight: 'bold' }
-                            ]}>{day.charAt(0)}</ThemedText>
-                        </View>
-                    ))}
-                </View>
+                {/* 4. The Custom Emotion Input */}
+                {moodIndex === 6 && (
+                    <View style={{ marginBottom: 20 }}>
+                        <ThemedText style={styles.sectionTitle}>Name your emotion</ThemedText>
+                        <Spacer height={10} />
+                        <ThemedCard style={[styles.diaryCard, { minHeight: 60, padding: 0 }]}>
+                            <TextInput
+                                style={[styles.textInput, { color: theme.text, padding: 15 }]}
+                                placeholder="E.g., Overwhelmed, Excited, Burnt Out..."
+                                placeholderTextColor={theme.iconColor}
+                                value={customMood}
+                                onChangeText={setCustomMood}
+                                maxLength={20}
+                            />
+                        </ThemedCard>
+                    </View>
+                )}
 
-                <Spacer height={40} />
-
-                {/* 2. Mood Selector */}
-                <ThemedText style={styles.sectionTitle}>Select your mood</ThemedText>
-                <Spacer height={15} />
-                
-                <View style={styles.moodRow}>
-                    {MOODS.map((mood) => {
-                        const isSelected = selectedMood === mood.id;
-                        return (
-                            <Pressable 
-                                key={mood.id} 
-                                style={[
-                                    styles.moodButton, 
-                                    { backgroundColor: theme.uiBackground, borderColor: theme.border },
-                                    isSelected && { borderColor: mood.color, backgroundColor: mood.color + '20' } // Adds a light tint when selected
-                                ]}
-                                onPress={() => setSelectedMood(mood.id)}
-                            >
-                                <Ionicons 
-                                    name={isSelected ? mood.icon.replace('-outline', '') : mood.icon} 
-                                    size={32} 
-                                    color={isSelected ? mood.color : theme.iconColor} 
-                                />
-                                <ThemedText style={[styles.moodLabel, isSelected && { color: mood.color, fontWeight: 'bold' }]}>
-                                    {mood.label}
-                                </ThemedText>
-                            </Pressable>
-                        )
-                    })}
-                </View>
-
-                <Spacer height={40} />
-
-                {/* 3. Diary / Journal Entry */}
+                {/* 5. Diary / Journal Entry */}
                 <ThemedText style={styles.sectionTitle}>Private Diary</ThemedText>
                 <Spacer height={15} />
                 
                 <ThemedCard style={styles.diaryCard}>
                     <TextInput
                         style={[styles.textInput, { color: theme.text }]}
-                        placeholder="Why do you feel this way? (Optional & Anonymous)"
+                        placeholder="Why do you feel this way? (Optional)"
                         placeholderTextColor={theme.iconColor}
                         multiline={true}
-                        numberOfLines={6}
+                        numberOfLines={5}
                         textAlignVertical="top" 
                         value={diaryEntry}
                         onChangeText={setDiaryEntry}
                     />
                 </ThemedCard>
 
-                    <Spacer height={40} />
+                <Spacer height={40} />
 
-                {/* 4. Submit Button */}
+                {/* 6. Submit Button */}
                 <Pressable 
-                    
                     style={({ pressed }) => [
                         styles.submitBtn, 
-                        { backgroundColor: selectedMood ? Colors.primary : theme.border },
+                        { backgroundColor: currentMood.color },
                         pressed && { opacity: 0.7 } 
                     ]}
-                    disabled={!selectedMood} 
-
-                    onPress={() => alert("Today Mood Uploaded!")} 
+                    disabled={moodIndex === 5 && customMood.trim() === ''}
+                    onPress={() => alert(`Logged vibe as: ${moodIndex === 5 ? customMood : currentMood.label}!`)} 
                 >
                     <ThemedText style={styles.submitBtnText}>
                         Log My Vibe
@@ -137,9 +160,9 @@ export default Mood
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        paddingHorizontal: 20,
     },
     header: {
+        alignItems: 'center', 
         marginTop: 10,
     },
     heading: {
@@ -151,48 +174,79 @@ const styles = StyleSheet.create({
         opacity: 0.6,
         marginTop: 5,
     },
-    calendarStrip: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-        alignItems: 'center',
-        paddingHorizontal: 10,
-    },
-    dayCircle: {
-        width: 35,
-        height: 35,
-        borderRadius: 17.5,
+    
+    // Big Image Styles
+    imageContainer: {
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: 'rgba(150,150,150,0.1)',
     },
-    dayText: {
-        fontSize: 14,
+    bigCircle: {
+        width: 250,
+        height: 250,
+        borderRadius: 125,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
+    bigEmotionImage: {
+        width: 200,
+        height: 200,
+    },
+    questionText: {
+        fontSize: 20,
+        fontWeight: '600',
+    },
+    moodHighlightText: {
+        fontSize: 32,
+        fontWeight: '900',
+        marginTop: 5,
+        textTransform: 'uppercase',
+        textAlign: 'center',
+    },
+
+    // Colored Box Buttons
+    moodScrollContent: {
+        paddingHorizontal: 20,
+        paddingVertical: 10,
+        gap: 12,
+    },
+    moodBox: {
+        width: 120, // Made the box slightly wider to fit the bigger face
+        height: 120, // Made it slightly taller
+        borderRadius: 16,
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 5,
+        shadowColor: '#000',
+        shadowOffset: { width: 0, height: 2 },
+        shadowOpacity: 0.1,
+        shadowRadius: 4,
+        elevation: 2,
+    },
+    smallEmotionImage: {
+        // HUGE CHANGE: Increased from 45x45 to 65x65!
+        width: 65,
+        height: 65,
+        marginBottom: 0,
+    },
+    boxLabelText: {
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#1d1e1c', 
+        marginTop: 2,
+    },
+
+    // Diary & Inputs
     sectionTitle: {
         fontSize: 18,
         fontWeight: '600',
-    },
-    moodRow: {
-        flexDirection: 'row',
-        justifyContent: 'space-between',
-    },
-    moodButton: {
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: 60,
-        height: 80,
-        borderRadius: 15,
-        borderWidth: 1,
-    },
-    moodLabel: {
-        fontSize: 12,
-        marginTop: 8,
+        paddingHorizontal: 20,
     },
     diaryCard: {
-        padding: 0, // Remove default padding so the TextInput takes the full space
-        minHeight: 150,
+        padding: 0, 
+        minHeight: 120,
         borderWidth: 1,
         borderColor: 'rgba(150,150,150,0.2)',
+        marginHorizontal: 20,
     },
     textInput: {
         flex: 1,
@@ -204,6 +258,7 @@ const styles = StyleSheet.create({
         borderRadius: 15,
         alignItems: 'center',
         justifyContent: 'center',
+        marginHorizontal: 20,
         shadowColor: '#000',
         shadowOffset: { width: 0, height: 4 },
         shadowOpacity: 0.2,
@@ -211,7 +266,7 @@ const styles = StyleSheet.create({
         elevation: 3,
     },
     submitBtnText: {
-        color: '#FFF',
+        color: '#1d1e1c',
         fontSize: 18,
         fontWeight: 'bold',
     }
